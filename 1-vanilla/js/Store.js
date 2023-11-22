@@ -21,4 +21,8 @@ export default class Store {
       product => product.name.includes(keyword)
       );
   }
+
+  getKeywordList() {
+    return this.storage.keywordData;
+  }
 }
