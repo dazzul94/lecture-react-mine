@@ -25,6 +25,9 @@ export default class Controller {
 
     this.tabView
     .on('@change', event => this.changeTab(event.detail.value));
+
+    this.keywordListView
+    .on('@click', event => this.search(event.detail.value));
   }
 
   search(searchKeyword) {
@@ -63,6 +66,7 @@ export default class Controller {
   }
 
   renderSearchResult() {
+    this.searchFormView.show(this.store.searchKeyword);
     this.tabView.hide();
     this.keywordListView.hide();
     this.searchResultView.show(this.store.searchResult);
