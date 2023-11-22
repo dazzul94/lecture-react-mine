@@ -41,7 +41,7 @@ export default class SearchFormView extends View {
 
   handleReset() {
     console.log(tag, "handleReset");
-    // this.showResetButton(false);
+    this.showResetButton(false);
     this.emit("@reset");
   }
 }
