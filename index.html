@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // let data = "Hello world";
+    // document.body.innerHTML = `<p>${data}</p>`;
+    // data = "안녕";
+    // document.body.innerHTML = `<p>${data}</p>`;
+
+    // 리액티브 하다 = 뷰, 리액트처럼 특정 값에 의존해 자동으로 반응하는 것
+    // 뷰 모델이라고 함(VM)
+    // 상태 변경을 하는 만큼 DOM API를 호출하게 되는데 성능에 영향이 있을 수 있다. -> 가상 돔의 출현
+    // 상태 변경을 여러번 호출하더라도 한번만 호출할 수 있게 중간 레이어를 만든다.(이것이 가상 돔)
+    // 가상 돔이 이전 돔과 현재 돔의 차이 나는 부분만 실제 돔 API를 호출하면서 성능을 높인다.(최소한의 개수로 돔 API 를 호출한다.)
+
+    const state = {
+      _data: "Hello world",
+    }
+    const render = () => (document.body.innerHTML = `<p>${state.data}</p>`);
+    Object.defineProperty(state, "data", {
+      get() {
+        console.log('get');
+        return state._data;
+      },
+      set(value) {
+        console.log('set');
+        state._data = value;
+        render();
+      }
+    })
+
+    render();
+    state.data = "안녕";
+    state.data = "Hello world";
+  </script>
+</body>
+</html>
