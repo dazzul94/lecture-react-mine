@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture React</title>
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- 리액트 라이브러리 -->
+  <script crossorigin
+    src="https://unpkg.com/react@17/umd/react.development.js">
+  </script>
+
+  <!-- 리액트 돔 라이브러리: 주로 웹개발에서 사용한다. 돔 API를 호출하게 해줌 -->
+  <!-- 리액트 네이티브는 안드로이드나 IOS에서 리액트로 만든 코드를 모바일 환경에서 호출하게 해주는 라이브러리다 -->
+  <!-- 또 다른 예로는 리액트 데스크탑 라이브러리도 있다 -->
+  <script crossorigin
+    src="https://unpkg.com/react-dom@17/umd/react-dom.development.js">
+  </script>
+
+  <!-- 바벨 라이브러리  -->
+  <!-- 최신 자바스크립트 문법을 웹 브라우저에서 사용하기 위한 라이브러리이다. -->
+  <!-- 클래스 문법, JSX문법을 사용하기 위해서 사용한다. -->
+  <!-- 주로 웹팩에 번들러로 통합해서 사용한다. -->
+  <script crossorigin
+    src="https://unpkg.com/@babel/standalone/babel.min.js">
+  </script>
+  
+  <script type="text/babel">
+    const element = React.createElement("h1", null, "Hello world");   // 리액트 엘리먼트: 일반 Object 객체
+    ReactDOM.render(element, document.querySelector("#app"));         // 리액트 돔 라이브러리
+
+    // document.body.innerHTML = `<p>Hello world</p>`;
+
+    // const p = document.createElement('p');
+    // p.textContent = "Hello world";
+    // document.body.appendChild(p);
+  </script>
+</body>
+</html>
