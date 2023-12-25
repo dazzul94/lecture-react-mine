@@ -4,7 +4,18 @@
 // 리액트 엘리먼트의 attribute는 CamelCase로 쓴다 예를 들어 onclick => onClick
 // class는 예약어이기 때문에 className을 사용한다.
 
+import { formatRelativeDate } from "./js/helpers.js";
 import store from "./js/Store.js";
+
+const TabType = {
+  KEYWORD: 'KEYWORD',
+  HISTORY: 'HISTORY'
+}
+
+const TabLabel = {
+  [TabType.KEYWORD]: '추천 검색어',
+  [TabType.HISTORY]: '최근 검색어'
+}
 
 // 리액트 컴포넌트 class를 만들어준다. (엘리먼트를 클래스로)
 class App extends React.Component {
@@ -15,7 +26,20 @@ class App extends React.Component {
       searchKeyword: "",  // 입력값을 나타내는 상태
       searchResult: [],
       submitted: false,
+      selectedTab: TabType.KEYWORD,
+      keywordList: [],
+      historyList: [],
     }
+  }
+
+  componentDidMount() {
+    const keywordList = store.getKeywordList();
+    const historyList = store.getHistoryList();
+
+    this.setState({ 
+      keywordList, 
+      historyList 
+    });
   }
 
   handleChangeInput(event) {  // 인풋 상태를 리액트 컴포넌트가 관리하게 한다.
@@ -34,17 +58,23 @@ class App extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();   // form 의 기본동작 막기
-    console.log("TODO:" + this.state.searchKeyword);
     // 검색 수행
     this.search(this.state.searchKeyword);
   }
 
   search(searchKeyword) {
     const searchResult = store.search(searchKeyword);
+
+    // 최근 검색어 추가
+    store.addHistory(searchKeyword);
+    const historyList = store.getHistoryList();
+
     this.setState({
-      searchResult: searchResult,
+      searchKeyword,
+      searchResult,
       submitted: true,
-    })
+      historyList,
+    });
   }
 
   handleReset() {
@@ -64,8 +94,16 @@ class App extends React.Component {
     })
   }
 
+  handleClickRemoveHistory(event, keyword) {
+    event.stopPropagation();  // 이벤트 버블링 막기(자식요소에서 버블링 막으면 됨)
+    store.removeHistory(keyword);
+
+    const historyList = store.getHistoryList();
+    this.setState({historyList});
+  }
+
   render() {
-    let resetButton = null;
+    // let resetButton = null;
 
     // 1. 엘리먼트를 만들어서 넣어준다.
     // if(this.state.searchKeyword.length > 0) {
@@ -108,6 +146,61 @@ class App extends React.Component {
         <div className="empty-box">검색 결과가 없습니다</div>
     ));
 
+    const keywordList = (
+      <ul className="list">
+        {this.state.keywordList.map(({id, keyword}, index) => {
+          return (
+            <li 
+              key={id}
+              onClick={() => this.search(keyword)}
+              >
+              <span className="number">{index + 1}</span>
+              <span>{keyword}</span>
+            </li>
+          )
+        })}
+      </ul>
+    );
+
+    const historyList = (
+      <ul className="list">
+        {this.state.historyList.map(({id, keyword, date}, index) => {
+          return (
+            <li 
+              key={id}
+              onClick={() => this.search(keyword)}>
+              <span>{keyword}</span>
+              <span className="date">{formatRelativeDate(date)}</span>
+              <button 
+                className="btn-remove"
+                onClick={event => this.handleClickRemoveHistory(event, keyword)}
+              >
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    )
+
+    const tabs = (
+      <>
+        <ul className="tabs">
+          {Object.values(TabType).map(tabType => {
+            return (
+              <li 
+                key={tabType}
+                onClick={() => this.setState({selectedTab : tabType})}
+                className={this.state.selectedTab === tabType ? 'active' : ''}>
+                {TabLabel[tabType]}
+              </li>
+            )
+          })}
+        </ul>
+        {this.state.selectedTab === TabType.KEYWORD && keywordList}
+        {this.state.selectedTab === TabType.HISTORY && historyList}
+      </>
+    );
+
     return (
       <>
         <header>
@@ -117,7 +210,7 @@ class App extends React.Component {
           {searchForm}
           <div className="content">
             {/* empty-box 보여줘야하니까 삼항연산자로 표현 */}
-            {this.state.submitted && searchResult}
+            {this.state.submitted ? searchResult : tabs}
           </div>
         </div>
       </>
